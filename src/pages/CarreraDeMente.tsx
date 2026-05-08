@@ -72,6 +72,7 @@ function initGame(players: Player[], categories: Category[]): FullGame {
 export default function CarreraDeMente() {
   const [game, setGame] = useState<FullGame | null>(null)
   const [showInstructions, setShowInstructions] = useState(false)
+  const [tickId, setTickId] = useState<string | null>(null)
 
   // ── Setup ─────────────────────────────────────────────────────
   function handleStart(players: Player[], categories: Category[]) {
@@ -374,9 +375,21 @@ export default function CarreraDeMente() {
               spinning={phase === 'spinning'}
               targetId={game.spinResult}
               onSpinEnd={handleSpinEnd}
+              onTick={setTickId}
             />
           </div>
         )}
+
+        {/* Live pointer label during spin */}
+        {phase === 'spinning' && tickId && (() => {
+          const cat = game.categories.find(c => c.id === tickId)
+          return (
+            <p style={{ fontFamily: 'Orbitron', fontSize: '1rem', fontWeight: 700,
+              color: cat ? cat.color : '#dc2626', margin: 0, letterSpacing: '0.08em' }}>
+              {cat ? cat.title : 'DUEL'}
+            </p>
+          )
+        })()}
 
         {/* Spin result overlay */}
         {phase === 'spin-result' && (() => {

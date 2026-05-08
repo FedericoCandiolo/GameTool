@@ -79,7 +79,7 @@ export default function Roulette({ categories, spinning, targetId, onSpinEnd, on
 
       const from = currentAngle.current
       const fromMod = ((from % 360) + 360) % 360
-      let extra = ((land - fromMod) + 360) % 360
+      let extra = ((-land - fromMod) % 360 + 360) % 360
       if (extra < 45) extra += 360
       const to = from + SPIN_REVS * 360 + extra
 
