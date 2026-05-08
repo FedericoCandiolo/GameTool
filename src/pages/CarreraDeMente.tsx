@@ -86,8 +86,8 @@ export default function CarreraDeMente() {
     setGame(initGame(players, categories))
   }
 
-  function handleSaveGame() {
-    if (game) saveGame(game)
+  async function handleSaveGame() {
+    if (game) await saveGame(game)
   }
 
   async function handleLoadGame() {
