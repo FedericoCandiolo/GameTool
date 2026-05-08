@@ -7,8 +7,11 @@ import QuestionCard from '../components/carreraDeMente/QuestionCard'
 import PlayerBoard from '../components/carreraDeMente/PlayerBoard'
 import DuelSetup from '../components/carreraDeMente/DuelSetup'
 import FullGameSetup from '../components/carreraDeMente/FullGameSetup'
+import PracticePanel from '../components/carreraDeMente/PracticePanel'
 import Instructions from '../components/carreraDeMente/Instructions'
 import styles from './CarreraDeMente.module.css'
+
+type Mode = 'full-game' | 'practice'
 
 // ── Helpers ────────────────────────────────────────────────────
 
@@ -73,9 +76,12 @@ export default function CarreraDeMente() {
   const [game, setGame] = useState<FullGame | null>(null)
   const [showInstructions, setShowInstructions] = useState(false)
   const [tickId, setTickId] = useState<string | null>(null)
+  const [mode, setMode] = useState<Mode>('full-game')
+  const [sharedCats, setSharedCats] = useState<Category[]>([])
 
   // ── Setup ─────────────────────────────────────────────────────
   function handleStart(players: Player[], categories: Category[]) {
+    setSharedCats(categories)
     setGame(initGame(players, categories))
   }
 
@@ -329,7 +335,29 @@ export default function CarreraDeMente() {
           </div>
         </header>
         <div className={styles.setupWrap}>
-          <FullGameSetup onStart={handleStart} />
+          {mode === 'full-game' && (
+            <FullGameSetup
+              categories={sharedCats}
+              onCategoriesChange={setSharedCats}
+              onStart={handleStart}
+            />
+          )}
+          {mode === 'practice' && (
+            <PracticePanel categories={sharedCats} onCategoriesChange={setSharedCats} />
+          )}
+        </div>
+        <div className={styles.controls}>
+          <div className={styles.modeRow}>
+            {(['full-game', 'practice'] as Mode[]).map(m => (
+              <button
+                key={m}
+                className={`${styles.modeBtn} ${mode === m ? styles.modeBtnActive : ''}`}
+                onClick={() => setMode(m)}
+              >
+                {m === 'full-game' ? 'Full Game' : 'Practice'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     )

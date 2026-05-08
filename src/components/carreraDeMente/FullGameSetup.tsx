@@ -9,11 +9,12 @@ function mkPlayer(n: number): Player {
 }
 
 interface Props {
+  categories: Category[]
+  onCategoriesChange: (cats: Category[]) => void
   onStart: (players: Player[], categories: Category[]) => void
 }
 
-export default function FullGameSetup({ onStart }: Props) {
-  const [categories, setCategories] = useState<Category[]>([])
+export default function FullGameSetup({ categories, onCategoriesChange, onStart }: Props) {
   const [players, setPlayers] = useState<Player[]>([mkPlayer(1), mkPlayer(2)])
 
   function updateName(id: string, name: string) {
@@ -44,7 +45,7 @@ export default function FullGameSetup({ onStart }: Props) {
       <div className={styles.columns}>
         {/* Categories column */}
         <div className={styles.column}>
-          <CategoryManager categories={categories} onChange={setCategories} />
+          <CategoryManager categories={categories} onChange={onCategoriesChange} />
         </div>
 
         {/* Players column */}

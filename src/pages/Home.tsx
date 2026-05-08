@@ -12,15 +12,8 @@ const games = [
   {
     id: 'carrera-de-mente',
     name: 'Carrera de Mente',
-    description: 'Full multiplayer game with roulette, crowns, and duels.',
+    description: 'Roll three dice, pick a category, and race through trivia questions.',
     path: '/carrera-de-mente',
-    icon: '🏆',
-  },
-  {
-    id: 'entrenamiento',
-    name: 'Carrera de Mente — Práctica',
-    description: 'Load your categories and look up any dice roll. Works with a physical board.',
-    path: '/entrenamiento',
     icon: '🎲',
   },
 ]
