@@ -215,7 +215,8 @@ export default function CarreraDeMente() {
     if (hasAllCrowns(updatedPlayer, g.categories)) {
       update({ players, winner: updatedPlayer, phase: 'game-over' })
     } else {
-      update({ players, phase: 'spin', spinResult: null, roll: null, question: null })
+      update({ players, phase: 'spin', spinResult: null, roll: null, question: null,
+        duelChallengedPlayerId: null, duelChallengedCategoryId: null })
     }
   }
 
@@ -229,7 +230,8 @@ export default function CarreraDeMente() {
     if (!g) return
     const correct = g.selectedAnswer === g.question?.correctAnswer
     if (correct) {
-      update({ phase: 'spin', spinResult: null, roll: null, question: null, selectedAnswer: null })
+      update({ phase: 'spin', spinResult: null, roll: null, question: null, selectedAnswer: null,
+        duelChallengedPlayerId: null, duelChallengedCategoryId: null })
     } else {
       update({ phase: 'turn-transition', selectedAnswer: null })
     }
@@ -254,11 +256,13 @@ export default function CarreraDeMente() {
         if (hasAllCrowns(updChallenger, g.categories)) {
           update({ players, winner: updChallenger, phase: 'game-over' })
         } else {
-          update({ players, phase: 'spin', spinResult: null, roll: null, question: null })
+          update({ players, phase: 'spin', spinResult: null, roll: null, question: null,
+            duelChallengedPlayerId: null, duelChallengedCategoryId: null })
         }
       } else {
         // With options: challenger wins, no crown, keep playing
-        update({ phase: 'spin', spinResult: null, roll: null, question: null })
+        update({ phase: 'spin', spinResult: null, roll: null, question: null,
+          duelChallengedPlayerId: null, duelChallengedCategoryId: null })
       }
     } else {
       // Challenged wins → end challenger turn
