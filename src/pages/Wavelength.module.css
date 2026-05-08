@@ -1,27 +1,68 @@
+/* ── Layout ──────────────────────────────────────────────────── */
 .page {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1rem 3rem;
-  position: relative;
+  padding: 0.5rem 0.5rem 1rem;
+  gap: 0.25rem;
+  overflow: hidden;
 }
 
 .header {
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
+  flex-shrink: 0;
+  padding: 0 0.25rem;
 }
 
+/* ── Wheel ───────────────────────────────────────────────────── */
+/*
+ * The SVG aspect ratio is 400:242 ≈ 1.653.
+ * We want the wheel to be as large as possible without pushing
+ * the controls off-screen.
+ *
+ * Portrait: width-constrained — fill the full viewport width.
+ * Landscape: height-constrained — limit width so height fits.
+ *
+ * max-width = min(
+ *   100vw,                         — never wider than screen
+ *   (available-height) × 1.653     — never taller than available height
+ * )
+ * "available height" ≈ 100dvh − 10rem  (header + controls)
+ */
+.wheelWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: min(
+    96vw,
+    calc((100dvh - 10rem) * 1.653)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fallback for browsers without dvh */
+@supports not (height: 100dvh) {
+  .wheelWrap {
+    max-width: min(96vw, calc((100vh - 10rem) * 1.653));
+  }
+}
+
+/* ── Text & controls ─────────────────────────────────────────── */
 .back {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.85rem, 3vw, 1rem);
   color: var(--color-muted);
   text-decoration: none;
   letter-spacing: 0.05em;
+  white-space: nowrap;
   transition: color 0.2s;
 }
 
@@ -31,35 +72,60 @@
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.6rem;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
   font-weight: 700;
   color: var(--color-accent);
   margin: 0;
   letter-spacing: 0.08em;
 }
 
-.wheelWrap {
-  width: 100%;
-  max-width: 560px;
-  padding: 0 0.5rem;
-}
-
 .phaseLabel {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 1.15rem;
+  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
   color: var(--color-muted);
   text-align: center;
-  max-width: 400px;
-  margin: 1.5rem 0 0;
-  letter-spacing: 0.03em;
-  min-height: 1.6em;
+  margin: 0;
+  padding: 0 1rem;
+  flex-shrink: 0;
 }
 
+/* ── Difficulty ──────────────────────────────────────────────── */
+.difficultyRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.diffBtn {
+  padding: 0.4rem 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.8rem, 3vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.diffBtn:hover {
+  color: var(--color-text);
+  border-color: var(--color-muted);
+}
+
+.diffBtnActive {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ── Action button ───────────────────────────────────────────── */
 .btn {
-  margin-top: 1.75rem;
-  padding: 0.85rem 2.5rem;
+  flex-shrink: 0;
+  padding: 0.75rem 2.25rem;
   font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.8rem, 3.5vw, 1rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   color: #0d1b2a;
@@ -71,17 +137,22 @@
   box-shadow: 0 4px 20px var(--color-accent-glow);
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: #33f0ff;
   transform: translateY(-2px);
   box-shadow: 0 6px 28px var(--color-accent-glow);
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-/* Popup */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ── Score popup ─────────────────────────────────────────────── */
 .popupOverlay {
   position: fixed;
   inset: 0;
@@ -97,10 +168,10 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 2rem;
-  padding: 3rem 3.5rem;
+  padding: clamp(1.5rem, 6vw, 3rem) clamp(1.5rem, 8vw, 3.5rem);
   text-align: center;
-  max-width: 380px;
-  width: 90%;
+  max-width: min(380px, 90vw);
+  width: 100%;
   animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -111,7 +182,7 @@
 
 .popupPoints {
   font-family: 'Orbitron', sans-serif;
-  font-size: clamp(3rem, 10vw, 5rem);
+  font-size: clamp(3rem, 15vw, 5rem);
   font-weight: 900;
   color: var(--color-accent);
   line-height: 1;
@@ -120,7 +191,7 @@
 
 .popupTitle {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 1.8rem;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
   font-weight: 700;
   color: var(--color-text);
   margin-top: 0.75rem;
@@ -128,7 +199,7 @@
 
 .popupSub {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
   color: var(--color-muted);
   margin-top: 0.5rem;
 }

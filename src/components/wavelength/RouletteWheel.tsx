@@ -7,12 +7,6 @@ const CY = 200
 const R = 185
 const R_INNER = 30 // hub radius
 
-// Scoring half-widths in degrees
-const ZONES = [
-  { halfWidth: 27, color: '#f5c842', pts: 3 },
-  { halfWidth: 18, color: '#f07d20', pts: 4 },
-  { halfWidth: 9,  color: '#e03030', pts: 5 },
-]
 
 // Convert game angle (0=left edge, 90=top, 180=right edge) → SVG {x,y}
 function toXY(angleDeg: number, radius: number = R) {
@@ -110,31 +104,32 @@ function Ticks() {
   )
 }
 
-// 0 / 50 / 100 labels
+// Edge percentage labels placed below the diameter line
+// CY = 200, viewBox height = 242, so we have 42px of space below the arc ends
+const LABEL_Y = 228
 function Labels() {
-  const positions = [
-    { deg: 0, label: '0', anchor: 'end' as const, dx: -8, dy: 4 },
-    { deg: 90, label: '50', anchor: 'middle' as const, dx: 0, dy: -10 },
-    { deg: 180, label: '100', anchor: 'start' as const, dx: 8, dy: 4 },
-  ]
   return (
     <>
-      {positions.map(({ deg, label, anchor, dx, dy }) => {
-        const p = toXY(deg, R + 18)
-        return (
-          <text
-            key={deg}
-            x={p.x + dx} y={p.y + dy}
-            textAnchor={anchor}
-            fill="rgba(255,255,255,0.6)"
-            fontSize="13"
-            fontFamily="Rajdhani, sans-serif"
-            fontWeight="600"
-          >
-            {label}
-          </text>
-        )
-      })}
+      <text
+        x={toXY(0).x + 4} y={LABEL_Y}
+        textAnchor="start"
+        fill="rgba(255,255,255,0.75)"
+        fontSize="15"
+        fontFamily="Rajdhani, sans-serif"
+        fontWeight="700"
+      >
+        0%
+      </text>
+      <text
+        x={toXY(180).x - 4} y={LABEL_Y}
+        textAnchor="end"
+        fill="rgba(255,255,255,0.75)"
+        fontSize="15"
+        fontFamily="Rajdhani, sans-serif"
+        fontWeight="700"
+      >
+        100%
+      </text>
     </>
   )
 }
@@ -178,15 +173,21 @@ interface Props {
   phase: Phase
   sweetSpot: number       // 0–180 game degrees
   needleAngle: number     // 0–180 game degrees
+  sectionSize: number     // half-width of each scoring band in degrees
   onNeedleMove?: (angle: number) => void
 }
 
-export default function RouletteWheel({ phase, sweetSpot, needleAngle, onNeedleMove }: Props) {
+export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSize, onNeedleMove }: Props) {
   const faceOpen = phase === 'start' || phase === 'shuffled' || phase === 'reveal'
   const showNeedle = phase === 'guess' || phase === 'reveal'
   const showSweetSpot = phase === 'reveal'
   const interactive = phase === 'guess'
   const dragging = useRef(false)
+
+  // Zone half-widths: 5-pt zone is half a section, then one section per outer band
+  const z5 = sectionSize / 2
+  const z4 = z5 + sectionSize
+  const z3 = z4 + sectionSize
 
   const angleFromEvent = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
     const svg = e.currentTarget
@@ -223,8 +224,8 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, onNeedleM
 
   return (
     <svg
-      viewBox="0 0 400 220"
-      style={{ width: '100%', maxWidth: 540, cursor: interactive ? 'crosshair' : 'default', userSelect: 'none' }}
+      viewBox="0 0 400 242"
+      style={{ width: '100%', display: 'block', cursor: interactive ? 'crosshair' : 'default', userSelect: 'none' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -244,9 +245,9 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, onNeedleM
           {/* Base face color */}
           <path d={sectorPath(0, 180, R, R_INNER)} fill="#162030" />
           {/* Score zones — drawn outermost first so inner overwrites */}
-          <ZoneSector sweetSpot={sweetSpot} halfWidth={27} color="#f5c842" />
-          <ZoneSector sweetSpot={sweetSpot} halfWidth={18} color="#f07d20" />
-          <ZoneSector sweetSpot={sweetSpot} halfWidth={9}  color="#e03030" />
+          <ZoneSector sweetSpot={sweetSpot} halfWidth={z3} color="#f5c842" />
+          <ZoneSector sweetSpot={sweetSpot} halfWidth={z4} color="#f07d20" />
+          <ZoneSector sweetSpot={sweetSpot} halfWidth={z5} color="#e03030" />
           {/* Re-draw hub on top */}
           <circle cx={CX} cy={CY} r={R_INNER} fill="#0d1b2a" stroke="#2a4060" strokeWidth="2" />
           <Ticks />
@@ -292,4 +293,3 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, onNeedleM
   )
 }
 
-export { ZONES }
