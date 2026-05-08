@@ -1,91 +1,271 @@
+/* ── Page shell ───────────────────────────────────────────────── */
 .page {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
+/* ── Header ───────────────────────────────────────────────────── */
 .header {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 720px;
-  padding: 1.25rem 1.5rem;
-  gap: 1rem;
+  max-width: 700px;
+  padding: 0.75rem 1.25rem 0.5rem;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .back {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-muted);
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
   letter-spacing: 0.05em;
   transition: color 0.15s;
+  white-space: nowrap;
+  padding: 0;
 }
 
 .back:hover { color: var(--color-text); }
 
 .title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 3.5vw, 1.25rem);
   font-weight: 700;
   color: var(--color-accent);
   margin: 0;
   flex: 1;
   text-align: center;
+  letter-spacing: 0.06em;
 }
 
 .headerRight {
-  min-width: 80px;
+  min-width: 40px;
   display: flex;
   justify-content: flex-end;
 }
 
-.main {
-  flex: 1;
+.btnGhost {
+  padding: 0.3rem 0.7rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btnGhost:hover { background: rgba(0, 212, 255, 0.08); }
+
+/* ── Turn banner ──────────────────────────────────────────────── */
+.banner {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 1rem;
+  width: 100%;
+}
+
+.bannerText {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  color: var(--color-muted);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* ── Central area ─────────────────────────────────────────────── */
+.central {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(1rem, 4vw, 2rem) 1.5rem;
-  gap: 2rem;
-  width: 100%;
-  max-width: 720px;
+  padding: 0.25rem 1rem;
+  gap: 0.75rem;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-/* Category chips */
-.categoryRow {
+.central::-webkit-scrollbar { display: none; }
+
+/* ── Roulette ─────────────────────────────────────────────────── */
+.rouletteWrap {
+  width: min(96vw, calc(100dvh - 22rem));
+  max-width: 360px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+
+/* ── Spin result overlay ──────────────────────────────────────── */
+.resultOverlay {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
+  align-items: center;
   justify-content: center;
 }
 
-.categoryChip {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 0.4rem 1rem;
-  border: 2px solid transparent;
-  background: var(--color-surface);
+.resultText {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 900;
   color: var(--color-text);
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.15s;
+  letter-spacing: 0.08em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.6, 0.64, 1);
 }
 
-.categoryChip:hover {
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.duelResultIcon { font-size: 1.6rem; }
+
+.catResultDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ── Transition / game over cards ────────────────────────────── */
+.transitionCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.transitionTitle {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.transitionNext {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 700;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.gameOverCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.trophyIcon {
+  font-size: clamp(3rem, 12vw, 5rem);
+  line-height: 1;
+}
+
+.winnerName {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.6rem, 6vw, 2.5rem);
+  font-weight: 900;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-shadow: 0 0 40px var(--color-accent-glow);
+}
+
+.winnerSub {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  color: var(--color-muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.winnerCrowns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* ── Controls ─────────────────────────────────────────────────── */
+.controls {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 1rem;
+  width: 100%;
+  max-width: 640px;
+}
+
+.actionBtn {
+  padding: 0.8rem 3rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(0.85rem, 3.5vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #07111c;
+  background: var(--color-accent);
+  border: none;
+  border-radius: 3rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 24px var(--color-accent-glow);
+}
+
+.actionBtn:hover {
+  background: #33f0ff;
   transform: translateY(-2px);
 }
 
-.categoryChipActive {
-  color: #07111c;
+.actionBtnWrong {
+  background: #ef4444;
+  box-shadow: 0 4px 24px rgba(239, 68, 68, 0.3);
 }
 
-.notFound {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 1.1rem;
-  color: #ef4444;
-  text-align: center;
+.actionBtnWrong:hover {
+  background: #f87171;
+}
+
+/* ── Setup wrap ───────────────────────────────────────────────── */
+.setupWrap {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }

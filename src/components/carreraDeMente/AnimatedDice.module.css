@@ -1,0 +1,48 @@
+.wrap {
+  display: flex;
+  gap: clamp(1rem, 4vw, 2rem);
+  align-items: center;
+  justify-content: center;
+}
+
+.die {
+  width: clamp(72px, 18vw, 96px);
+  height: clamp(72px, 18vw, 96px);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 10px;
+  gap: 3px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.15s;
+}
+
+.dieActive {
+  border-color: rgba(255, 255, 255, 0.35);
+  animation: shake 0.07s linear infinite;
+}
+
+.dieSettled {
+  transform: scale(1.06);
+}
+
+@keyframes shake {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(1px, -1px) rotate(0.5deg); }
+  50%  { transform: translate(-1px, 0) rotate(-0.5deg); }
+  75%  { transform: translate(1px, 1px) rotate(0.3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.dot {
+  border-radius: 50%;
+  background: var(--color-accent);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.dotHidden {
+  visibility: hidden;
+}
