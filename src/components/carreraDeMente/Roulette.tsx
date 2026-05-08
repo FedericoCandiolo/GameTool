@@ -101,9 +101,11 @@ export default function Roulette({ categories, spinning, targetId, onSpinEnd }: 
         <circle cx={CX} cy={CY} r={R + 10} fill="none" stroke="#1e3552" strokeWidth="1.5" />
         <circle cx={CX} cy={CY} r={R + 4}  fill="none" stroke="#0a1828" strokeWidth="6" />
 
-        {/* Spinning wheel */}
+        {/* Spinning wheel — transformBox:'view-box' anchors to SVG viewport center,
+             making transform-origin:'50% 50%' map to (150,150) regardless of scale */}
         <g style={{
-          transformOrigin: `${CX}px ${CY}px`,
+          transformBox: 'view-box' as React.CSSProperties['transformBox'],
+          transformOrigin: '50% 50%',
           transform: `rotate(${rot}deg)`,
           transition: animating ? `transform ${SPIN_MS}ms cubic-bezier(0.12, 0.85, 0.25, 1)` : 'none',
         }}>
