@@ -20,6 +20,37 @@
   padding: 0 0.25rem;
 }
 
+.headerRight {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Team banner ─────────────────────────────────────────────── */
+.teamBanner {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 212, 255, 0.07);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 2rem;
+}
+
+.teamBannerName {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(0.75rem, 3vw, 0.9rem);
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.05em;
+}
+
+.teamBannerRound {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+  color: var(--color-muted);
+}
+
 /* ── Wheel ───────────────────────────────────────────────────── */
 /*
  * The SVG aspect ratio is 400:242 ≈ 1.653.
@@ -85,8 +116,7 @@
   color: var(--color-muted);
   text-align: center;
   margin: 0;
-  padding: 0 1rem;
-  flex-shrink: 0;
+  padding: 0 0.5rem;
 }
 
 /* ── Difficulty ──────────────────────────────────────────────── */
@@ -152,54 +182,85 @@
   cursor: default;
 }
 
-/* ── Score popup ─────────────────────────────────────────────── */
-.popupOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+/* ── Controls wrapper (bottom section, always in flow) ───────── */
+.controls {
+  flex-shrink: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(4px);
-}
-
-.popup {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 2rem;
-  padding: clamp(1.5rem, 6vw, 3rem) clamp(1.5rem, 8vw, 3.5rem);
-  text-align: center;
-  max-width: min(380px, 90vw);
+  gap: 0.5rem;
   width: 100%;
-  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 640px;
+  padding: 0 0.5rem;
 }
 
-@keyframes popIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
-}
-
-.popupPoints {
-  font-family: 'Orbitron', sans-serif;
-  font-size: clamp(3rem, 15vw, 5rem);
-  font-weight: 900;
-  color: var(--color-accent);
-  line-height: 1;
-  text-shadow: 0 0 40px var(--color-accent-glow);
-}
-
-.popupTitle {
+/* ── Reveal message (number lives on the wheel itself) ──────── */
+.revealMsg {
   font-family: 'Rajdhani', sans-serif;
-  font-size: clamp(1.3rem, 5vw, 1.8rem);
+  font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+  text-align: center;
+  margin: 0;
+  padding: 0 0.5rem;
+  animation: fadeUp 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.revealTitle {
   font-weight: 700;
   color: var(--color-text);
-  margin-top: 0.75rem;
 }
 
-.popupSub {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+.revealSub {
   color: var(--color-muted);
-  margin-top: 0.5rem;
+}
+
+/* ── Ghost button (header actions) ──────────────────────────── */
+.btnGhost {
+  padding: 0.35rem 0.9rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.8rem, 3vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btnGhost:hover {
+  background: rgba(0, 212, 255, 0.08);
+  border-color: var(--color-accent);
+}
+
+/* ── Clue input ──────────────────────────────────────────────── */
+.clueInput {
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.9rem, 3.5vw, 1rem);
+  color: var(--color-text);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+
+.clueInput::placeholder {
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+
+.clueInput:focus {
+  border-color: var(--color-accent);
 }

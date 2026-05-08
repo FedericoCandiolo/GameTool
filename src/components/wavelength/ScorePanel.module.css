@@ -1,0 +1,227 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 17, 28, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panelTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.closeBtn:hover { color: var(--color-text); }
+
+/* ── Sections ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+/* ── Standings ── */
+.standings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.standingRow {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr auto auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0,0,0,0.2);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.rank {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.teamName {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.teamMembers {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.teamScore {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  min-width: 2rem;
+  text-align: right;
+}
+
+/* ── History ── */
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.historyRow {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(0,0,0,0.15);
+  border-radius: 0.4rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.histRound {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.histMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.histTeam {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.histPlayers {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.histClue {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+.histPoints {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.statusMsg {
+  margin-right: auto;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.actionBtn {
+  padding: 0.45rem 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.actionBtn:hover {
+  color: var(--color-text);
+  border-color: var(--color-muted);
+}
+
+.warnBtn { color: #f5c842; border-color: rgba(245,200,66,0.4); }
+.warnBtn:hover { color: #f5c842; border-color: #f5c842; }
+
+.dangerBtn { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
+.dangerBtn:hover { color: #ff6b6b; border-color: #ff6b6b; }

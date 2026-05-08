@@ -134,38 +134,25 @@ function Labels() {
   )
 }
 
-// Needle line from hub to rim
+// Needle: thin triangle from hub to rim
+const NEEDLE_BASE = 7   // half-width at the base in SVG units
 function Needle({ angle }: { angle: number }) {
-  const tip = toXY(angle, R - 4)
-  const base1 = toXY(angle + 90, R_INNER - 2)
-  const base2 = toXY(angle - 90, R_INNER - 2)
+  const tip   = toXY(angle,      R - 4)
+  const base1 = toXY(angle + 90, NEEDLE_BASE)
+  const base2 = toXY(angle - 90, NEEDLE_BASE)
   return (
     <g>
       <polygon
         points={`${tip.x},${tip.y} ${base1.x},${base1.y} ${base2.x},${base2.y}`}
         fill="#00e5ff"
         stroke="#00b0d4"
-        strokeWidth="1"
+        strokeWidth="0.5"
       />
       <circle cx={CX} cy={CY} r={R_INNER - 4} fill="#0d1b2a" stroke="#00e5ff" strokeWidth="2" />
     </g>
   )
 }
 
-// Sweet-spot marker (small arrow at the rim)
-function SweetSpotMarker({ angle }: { angle: number }) {
-  const tip = toXY(angle, R + 2)
-  const b1 = toXY(angle + 5, R - 12)
-  const b2 = toXY(angle - 5, R - 12)
-  return (
-    <polygon
-      points={`${tip.x},${tip.y} ${b1.x},${b1.y} ${b2.x},${b2.y}`}
-      fill="#ffffff"
-      stroke="#aaa"
-      strokeWidth="0.5"
-    />
-  )
-}
 
 export type Phase = 'start' | 'shuffled' | 'closed' | 'guess' | 'reveal'
 
@@ -174,10 +161,11 @@ interface Props {
   sweetSpot: number       // 0–180 game degrees
   needleAngle: number     // 0–180 game degrees
   sectionSize: number     // half-width of each scoring band in degrees
+  points?: number | null  // shown as overlay in reveal phase
   onNeedleMove?: (angle: number) => void
 }
 
-export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSize, onNeedleMove }: Props) {
+export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSize, points, onNeedleMove }: Props) {
   const faceOpen = phase === 'start' || phase === 'shuffled' || phase === 'reveal'
   const showNeedle = phase === 'guess' || phase === 'reveal'
   const showSweetSpot = phase === 'reveal'
@@ -193,7 +181,7 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSi
     const svg = e.currentTarget
     const rect = svg.getBoundingClientRect()
     const x = (e.clientX - rect.left) * (400 / rect.width)
-    const y = (e.clientY - rect.top) * (220 / rect.height)
+    const y = (e.clientY - rect.top) * (242 / rect.height)
     const dx = x - CX
     const dy = CY - y
     let angle = Math.atan2(dy, -dx) * (180 / Math.PI)
@@ -280,8 +268,11 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSi
       {/* Needle */}
       {showNeedle && <Needle angle={needleAngle} />}
 
-      {/* Sweet-spot marker on reveal */}
-      {showSweetSpot && <SweetSpotMarker angle={sweetSpot} />}
+      {/* Sweet-spot marker: a subtle line from hub to rim at the target angle */}
+      {showSweetSpot && (() => {
+        const tip = toXY(sweetSpot, R - 4)
+        return <line x1={CX} y1={CY} x2={tip.x} y2={tip.y} stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeDasharray="4 3" />
+      })()}
 
       {/* Diameter baseline */}
       <line
@@ -289,6 +280,44 @@ export default function RouletteWheel({ phase, sweetSpot, needleAngle, sectionSi
         x2={toXY(180).x} y2={CY}
         stroke="#2a4060" strokeWidth="2"
       />
+
+      {/* Points overlay — rendered inside the SVG so it scales with the wheel */}
+      {showSweetSpot && points != null && (
+        <g style={{ pointerEvents: 'none' }}>
+          {/* Dark backdrop so text stays legible over any zone colour */}
+          <rect
+            x="148" y="88" width="104" height="84"
+            rx="14"
+            fill="rgba(7,17,28,0.80)"
+            stroke="rgba(0,212,255,0.18)"
+            strokeWidth="1"
+          />
+          {/* Points number */}
+          <text
+            x="200" y="148"
+            textAnchor="middle"
+            fill="#00d4ff"
+            fontSize="52"
+            fontFamily="Orbitron, sans-serif"
+            fontWeight="900"
+            style={{ filter: 'drop-shadow(0 0 10px rgba(0,212,255,0.6))' }}
+          >
+            {points}
+          </text>
+          {/* "POINTS" label */}
+          <text
+            x="200" y="165"
+            textAnchor="middle"
+            fill="rgba(255,255,255,0.55)"
+            fontSize="12"
+            fontFamily="Rajdhani, sans-serif"
+            fontWeight="700"
+            letterSpacing="4"
+          >
+            POINTS
+          </text>
+        </g>
+      )}
     </svg>
   )
 }
