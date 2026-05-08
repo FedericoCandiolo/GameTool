@@ -287,10 +287,11 @@ export default function CarreraDeMente() {
     switch (phase) {
       case 'spin': return `${currentPlayer.name}'s turn — spin the roulette!`
       case 'spinning': return 'Spinning…'
-      case 'spin-result':
-        return spinResult === 'duel'
-          ? '⚔ DUEL!'
-          : `Category: ${catName}`
+      case 'spin-result': {
+        if (spinResult === 'duel') return '⚔ DUEL!'
+        const sc = g.categories.find(c => c.id === spinResult)?.title ?? ''
+        return `Category: ${sc}`
+      }
       case 'dice-rolling': return 'Rolling dice…'
       case 'question':
       case 'answer-reveal':
@@ -378,20 +379,25 @@ export default function CarreraDeMente() {
         )}
 
         {/* Spin result overlay */}
-        {phase === 'spin-result' && (
-          <div className={styles.resultOverlay}>
-            <p className={styles.resultText}>
-              {game.spinResult === 'duel' ? (
-                <><span className={styles.duelResultIcon}>⚔</span> DUEL!</>
-              ) : (
-                <>
-                  <span className={styles.catResultDot} style={{ background: activeCategory?.color }} />
-                  {activeCategory?.title}
-                </>
-              )}
-            </p>
-          </div>
-        )}
+        {phase === 'spin-result' && (() => {
+          const spinCat = game.spinResult && game.spinResult !== 'duel'
+            ? game.categories.find(c => c.id === game.spinResult) ?? null
+            : null
+          return (
+            <div className={styles.resultOverlay}>
+              <p className={styles.resultText}>
+                {game.spinResult === 'duel' ? (
+                  <><span className={styles.duelResultIcon}>⚔</span> DUEL!</>
+                ) : (
+                  <>
+                    <span className={styles.catResultDot} style={{ background: spinCat?.color }} />
+                    {spinCat?.title}
+                  </>
+                )}
+              </p>
+            </div>
+          )
+        })()}
 
         {/* Dice rolling */}
         {phase === 'dice-rolling' && game.roll && (

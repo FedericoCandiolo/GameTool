@@ -42,14 +42,21 @@ function textRot(mid: number) {
 // Quartic ease-out: fast start, long gentle deceleration (like a real roulette)
 function easeOut(t: number) { return 1 - Math.pow(1 - t, 4) }
 
+// Returns the segment id currently under the pointer given cumulative rotation angle
+function segAtPointer(angle: number, segs: Seg[]): string {
+  const a = ((-angle) % 360 + 360) % 360
+  return segs.find(s => a >= s.start && a < s.end)?.id ?? ''
+}
+
 interface Props {
   categories: Category[]
   spinning: boolean
   targetId: string | null
   onSpinEnd: (id: string) => void
+  onTick?: (id: string) => void
 }
 
-export default function Roulette({ categories, spinning, targetId, onSpinEnd }: Props) {
+export default function Roulette({ categories, spinning, targetId, onSpinEnd, onTick }: Props) {
   const segs = buildSegs(categories)
   const wheelRef = useRef<SVGGElement>(null)
   const currentAngle = useRef(0)    // cumulative rotation in degrees
@@ -81,7 +88,9 @@ export default function Roulette({ categories, spinning, targetId, onSpinEnd }: 
 
       function step(now: number) {
         const t = Math.min((now - startTime) / SPIN_MS, 1)
-        setAngle(from + (to - from) * easeOut(t))
+        const angle = from + (to - from) * easeOut(t)
+        setAngle(angle)
+        onTick?.(segAtPointer(angle, segs))
         if (t < 1) {
           rafRef.current = requestAnimationFrame(step)
         } else {
