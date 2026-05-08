@@ -9,6 +9,13 @@ const games = [
     path: '/wavelength',
     icon: '〰️',
   },
+  {
+    id: 'carrera-de-mente',
+    name: 'Carrera de Mente',
+    description: 'Roll three dice, pick a category, and race through trivia questions.',
+    path: '/carrera-de-mente',
+    icon: '🎲',
+  },
 ]
 
 export default function Home() {

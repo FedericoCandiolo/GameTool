@@ -1,0 +1,91 @@
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  padding: 1.25rem 1.5rem;
+  gap: 1rem;
+}
+
+.back {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.15s;
+}
+
+.back:hover { color: var(--color-text); }
+
+.title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.headerRight {
+  min-width: 80px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem) 1.5rem;
+  gap: 2rem;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* Category chips */
+.categoryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.categoryChip {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  border: 2px solid transparent;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+.categoryChip:hover {
+  transform: translateY(-2px);
+}
+
+.categoryChipActive {
+  color: #07111c;
+}
+
+.notFound {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  color: #ef4444;
+  text-align: center;
+}

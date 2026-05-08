@@ -1,0 +1,83 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.dice {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.dieWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dieBtn {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.dieBtn:hover {
+  color: var(--color-text);
+}
+
+.dieFace {
+  width: 72px;
+  height: 72px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 8px;
+  gap: 2px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dieFace:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 20px var(--color-accent-glow);
+}
+
+.dot {
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 4px var(--color-accent-glow);
+}
+
+.dotHidden {
+  visibility: hidden;
+}
+
+.rollCode {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 20px var(--color-accent-glow);
+}
