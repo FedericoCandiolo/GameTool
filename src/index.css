@@ -1,0 +1,50 @@
+:root {
+  --color-bg:           #07111c;
+  --color-surface:      #0f1e2e;
+  --color-border:       #1e3552;
+  --color-text:         #e8edf2;
+  --color-muted:        #6a8aaa;
+  --color-accent:       #00d4ff;
+  --color-accent-glow:  rgba(0, 212, 255, 0.25);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Rajdhani', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  outline: none;
+}
+
+/* Subtle radial vignette */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,100,180,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
