@@ -9,6 +9,7 @@ import DuelSetup from '../components/carreraDeMente/DuelSetup'
 import FullGameSetup from '../components/carreraDeMente/FullGameSetup'
 import PracticePanel from '../components/carreraDeMente/PracticePanel'
 import Instructions from '../components/carreraDeMente/Instructions'
+import { saveGame, loadGameFromFile } from '../utils/gameSave'
 import styles from './CarreraDeMente.module.css'
 
 type Mode = 'full-game' | 'practice'
@@ -83,6 +84,17 @@ export default function CarreraDeMente() {
   function handleStart(players: Player[], categories: Category[]) {
     setSharedCats(categories)
     setGame(initGame(players, categories))
+  }
+
+  function handleSaveGame() {
+    if (game) saveGame(game)
+  }
+
+  async function handleLoadGame() {
+    const loaded = await loadGameFromFile()
+    if (!loaded) return
+    setSharedCats(loaded.categories)
+    setGame(loaded)
   }
 
   // ── Derived ───────────────────────────────────────────────────
@@ -335,6 +347,7 @@ export default function CarreraDeMente() {
           <Link to="/" className={styles.back}>← Menu</Link>
           <h1 className={styles.title}>Carrera de Mente</h1>
           <div className={styles.headerRight}>
+            <button className={styles.btnGhost} onClick={handleLoadGame}>Load</button>
             <button className={styles.btnGhost} onClick={() => setShowInstructions(true)}>?</button>
           </div>
         </header>
@@ -380,6 +393,7 @@ export default function CarreraDeMente() {
         </button>
         <h1 className={styles.title}>Carrera de Mente</h1>
         <div className={styles.headerRight}>
+          <button className={styles.btnGhost} onClick={handleSaveGame}>Save</button>
           <button className={styles.btnGhost} onClick={() => setShowInstructions(true)}>?</button>
         </div>
       </header>

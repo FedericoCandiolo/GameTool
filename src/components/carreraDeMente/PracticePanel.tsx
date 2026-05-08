@@ -51,7 +51,8 @@ export default function PracticePanel({ categories, onCategoriesChange }: Props)
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
+      width: '100%', maxWidth: '700px', margin: '0 auto', padding: '0 1rem 1rem', gap: '0.75rem' }}>
       <CategoryManager categories={categories} onChange={onCategoriesChange} />
 
       {categories.length > 0 && (
@@ -121,6 +122,6 @@ export default function PracticePanel({ categories, onCategoriesChange }: Props)
           )}
         </>
       )}
-    </>
+    </div>
   )
 }
