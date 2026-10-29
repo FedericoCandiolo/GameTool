@@ -36,7 +36,8 @@ Cada valor tiene un comentario. Guardá y recargá la página (F5).
 
 La sección `original` de ese archivo agrupa los comportamientos raros que tenía el Scratch
 por errores en los bloques (por ejemplo, que los meteoritos sólo aparezcan por la derecha).
-Están activados para que el juego sea igual al original. Poné `false` en cada uno para corregirlo.
+Cada uno dice en su comentario qué pasa con `true` y con `false`: casi todos vienen en `true`,
+para que el juego sea igual al original, salvo los que molestaban más que lo que aportaban.
 
 ## Estructura
 
