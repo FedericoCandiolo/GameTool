@@ -1014,7 +1014,13 @@ const BABOSA = {
     },
     function* (s) {
       for (;;) {
-        if (s.tocando('Escudo')) s.borrarClon();
+        if (s.tocando('Escudo')) {
+          // Los otros dos modos de morir (disparos y tiempo) borran el rastro;
+          // éste no, y el rastro sigue haciendo daño sin la babosa. Como ellos,
+          // borra el de TODAS las babosas: el lápiz del Scratch es uno solo.
+          if (!C.original.babosaConEscudoDejaRastro) M.lapiz.borrar();
+          s.borrarClon();
+        }
         yield;
       }
     },
