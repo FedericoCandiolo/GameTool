@@ -16,6 +16,13 @@ const games = [
     path: '/carrera-de-mente',
     icon: '🎲',
   },
+  {
+    id: 'space-survival',
+    name: 'Space Survival',
+    description: 'Dodge meteors and shoot your way through an arcade remake of a 2018 Scratch game.',
+    path: '/space-survival',
+    icon: '🚀',
+  },
 ]
 
 export default function Home() {
