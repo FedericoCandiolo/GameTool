@@ -210,6 +210,24 @@ Detalles heredados de Scratch:
   (el rastro de la babosa) y los píxeles de ese mismo color en otros sprites (el borde oscuro de
   la babosa). Por eso tocar la babosa también lastima.
 
+## 4 bis. Tabla de récords
+
+La maneja `Interfaz` (`js/interfaz.js`) y vive en `localStorage`:
+
+| Clave | Qué guarda |
+|---|---|
+| `spaceSurvival.records` | la tabla, como JSON: `[{nombre, puntos, fecha}]` |
+| `spaceSurvival.nombre` | el último nombre usado, para ofrecerlo ya escrito |
+| `spaceSurvival.record` | sólo se lee: el récord único de antes de la tabla, que se migra a una fila |
+
+- `ui.entraEnTabla(puntos)` dice si un puntaje entra; `ui.agregarRecord(nombre, puntos)` lo
+  guarda y devuelve el puesto.
+- Lo guardado puede estar roto o venir de otra versión, así que al leerlo se filtra fila por
+  fila y, si algo no cierra, se arranca con la tabla vacía en vez de romper el juego. El
+  nombre lo escribe el jugador y después va a `innerHTML`: se escapa con `escaparHTML()`.
+- Mientras el formulario del nombre está abierto, `manejarTecla()` devuelve `true` para todo,
+  así ninguna tecla silencia, pausa ni reinicia mientras se escribe.
+
 ## 5. Lápiz y sonido
 
 - **Lápiz** (`M.lapiz`): lo usa la babosa para dejar su rastro. Se dibuja en una capa debajo de
@@ -256,7 +274,7 @@ Qué pantalla se ve sale de `interfaz.estado()`:
 |---|---|---|
 | `'titulo'` | `M.G.pantalla === 'titulo'` | logo, pestañas Controles / Enemigos / Power-ups, botón Jugar |
 | `'juego'` | después de `Inicio del Juego` | el HUD (y la pausa, si `interfaz.pausado`) |
-| `'fin'` | `M.detenido` (después de la explosión) | puntos, récord, Jugar de nuevo / Menú |
+| `'fin'` | `M.detenido` (después de la explosión) | puntos, alta en la tabla de récords, Jugar de nuevo / Menú |
 
 Partes del archivo:
 
@@ -270,7 +288,7 @@ Partes del archivo:
 - `actualizar()`: se llama después de cada tick. Muestra u oculta las pantallas y pone al día
   los números y las barras del HUD. Sólo toca el HTML cuando un valor cambió.
 - Detalles: destello rojo o verde cuando la vida baja o sube, viñeta roja con menos del 25 % de
-  vida, y récord guardado en `localStorage`.
+  vida, y la tabla de récords guardada en `localStorage`.
 
 Los colores y tamaños están en `estilos.css`. Las medidas usan `cqw` (1 % del ancho del juego),
 así la interfaz se agranda y se achica junto con el canvas.

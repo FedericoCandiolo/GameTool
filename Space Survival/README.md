@@ -2,7 +2,7 @@
 
 Remake web del juego hecho en Scratch 2 en 2018. Conserva los dibujos, los sonidos y la
 jugabilidad del original, con una interfaz nueva de estilo arcade (barra de vida, power-ups
-con su tecla, carga del láser, pantalla de título con instrucciones y récord).
+con su tecla, carga del láser, pantalla de título con instrucciones y tabla de récords).
 Corre en cualquier navegador, sin instalar nada.
 
 ## Jugar
@@ -69,7 +69,17 @@ RAW Scratch/                el proyecto original (no lo usa el juego)
 - [docs/AGREGAR-FUNCIONALIDADES.md](docs/AGREGAR-FUNCIONALIDADES.md): cómo sumar enemigos,
   power-ups, imágenes, sonidos y teclas, con código de ejemplo.
 
-El récord se guarda en el navegador (no en un archivo), así que cada navegador tiene el suyo.
+## Tabla de récords
+
+La tabla se ve en la pantalla de título (los primeros 5) y al terminar la partida, si el
+puntaje entró. En ese caso el juego pide un nombre antes de mostrarla, con el puesto nuevo
+resaltado; el nombre queda guardado y aparece ya escrito la próxima vez, así alcanza con
+apretar Enter. `Saltear` sigue sin guardar nada.
+
+Se guarda en el navegador (`localStorage`, no en un archivo), así que cada navegador y cada
+perfil tiene la suya, y no viaja a ningún lado. Cuántos puestos entran, cuántos se ven en el
+título y el largo máximo del nombre se cambian en la sección `records` de
+[`config.js`](config.js).
 Las tipografías se bajan de Google Fonts; sin internet se usan las del sistema y el juego anda igual.
 
 ## Si cambiás imágenes o sonidos

@@ -22,6 +22,14 @@ window.CONFIG = {
     volumen: 0.6,            // 0 a 1
   },
 
+  // Tabla de récords. Se guarda en este navegador (localStorage): no viaja a
+  // ningún lado, así que cada navegador y cada perfil tiene la suya.
+  records: {
+    puestos: 8,        // cuántos entran en la tabla
+    enTitulo: 5,       // cuántos se ven en la pantalla de título
+    largoNombre: 12,   // máximo de letras del nombre
+  },
+
   // Controles en pantalla para teléfonos y tablets (js/tactil.js).
   tactil: {
     activar: 'auto',        // 'auto' = sólo en pantallas sin mouse · true = siempre · false = nunca

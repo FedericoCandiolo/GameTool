@@ -9,6 +9,32 @@
 
 const imagenAsset = (ruta) => window.ASSETS['img/' + ruta];
 
+// La tabla de récords vive en este navegador. Si el navegador no deja guardar
+// (modo incógnito, permisos), el juego anda igual: la tabla dura hasta cerrar.
+const CLAVE_RECORDS = 'spaceSurvival.records';
+const CLAVE_NOMBRE = 'spaceSurvival.nombre';
+const CLAVE_RECORD_VIEJO = 'spaceSurvival.record'; // de antes de la tabla: un solo número
+
+function leerGuardado(clave) {
+  try {
+    return localStorage.getItem(clave);
+  } catch (e) {
+    return null;
+  }
+}
+
+function escribirGuardado(clave, valor) {
+  try {
+    localStorage.setItem(clave, valor);
+  } catch (e) {
+    /* sin almacenamiento: dura hasta cerrar la página */
+  }
+}
+
+// El nombre lo escribe el jugador y después va a innerHTML: hay que escaparlo.
+const escaparHTML = (t) =>
+  String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
 // Power-ups: nombre, ícono y descripción. La clave es el tipo que usa sprites.js.
 const TIPOS_POWERUP = {
   Turbo: {
@@ -72,7 +98,7 @@ class Interfaz {
     this.raiz = raiz;
     this.pausado = false;
     this.pestana = 0;
-    this.record = this._leerRecord();
+    this.records = this._leerRecords();
     this._anterior = {};
     this._construir();
   }
@@ -102,6 +128,13 @@ class Interfaz {
   // ---- teclado (devuelve true si la tecla era para la interfaz y no para el juego)
 
   manejarTecla(k) {
+    // Mientras se pide el nombre para la tabla, las teclas son del formulario:
+    // ni silencian, ni pausan, ni reinician. Si el foco se perdió, se recupera.
+    if (!this.el.finAlta.classList.contains('oculto')) {
+      if (document.activeElement !== this.el.finNombre) this.el.finNombre.focus();
+      return true;
+    }
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') return true;
     const T = C.teclas;
     const es = (t) => t && k === Motor.normalizarTecla(t);
     const estado = this.estado();
@@ -219,7 +252,7 @@ class Interfaz {
           <div class="pie-tarjeta"><kbd>←</kbd><kbd>→</kbd> ver más</div>
         </div>
         <button class="boton-principal" id="boton-jugar">Jugar <kbd>ENTER</kbd></button>
-        <p class="record-titulo" id="titulo-record"></p>
+        <div class="records" id="titulo-records"></div>
       </div>
 
       <div id="pausa" class="pantalla oculto">
@@ -231,9 +264,23 @@ class Interfaz {
         <h2 class="peligro">Nave destruida</h2>
         <span class="hud-etiqueta">Puntos</span>
         <div id="fin-puntos"></div>
+
+        <form id="fin-alta" class="oculto" autocomplete="off">
+          <label for="fin-nombre">¡Entraste en la tabla! Poné tu nombre</label>
+          <div class="fin-alta-fila">
+            <input id="fin-nombre" type="text" maxlength="${C.records.largoNombre}"
+                   autocomplete="off" spellcheck="false" placeholder="Tu nombre">
+            <button type="submit" class="boton-principal">Guardar</button>
+          </div>
+          <button type="button" class="boton-secundario" id="boton-saltear">Saltear</button>
+        </form>
+
+        <div class="records" id="fin-records"></div>
         <p id="fin-record"></p>
-        <button class="boton-principal" id="boton-otra">Jugar de nuevo <kbd>${nombreTecla(T.reiniciar)}</kbd></button>
-        <button class="boton-secundario" id="boton-menu">Menú <kbd>ESC</kbd></button>
+        <div id="fin-botones">
+          <button class="boton-principal" id="boton-otra">Jugar de nuevo <kbd>${nombreTecla(T.reiniciar)}</kbd></button>
+          <button class="boton-secundario" id="boton-menu">Menú <kbd>ESC</kbd></button>
+        </div>
       </div>
 
       <div id="aviso" class="oculto"></div>
@@ -247,13 +294,20 @@ class Interfaz {
       puntos: $('hud-puntos'), record: $('hud-record'),
       pu: teclasPU.map((_, i) => $('hud-pu' + i)), efectos: $('hud-efectos'),
       laser: $('hud-laser'), laserBarra: $('hud-laser-barra'), laserTexto: $('hud-laser-texto'),
-      finPuntos: $('fin-puntos'), finRecord: $('fin-record'), tituloRecord: $('titulo-record'),
+      finPuntos: $('fin-puntos'), finRecord: $('fin-record'), tituloRecords: $('titulo-records'),
+      finAlta: $('fin-alta'), finNombre: $('fin-nombre'), finRecords: $('fin-records'),
+      finBotones: $('fin-botones'),
     };
 
     this.raiz.querySelectorAll('nav button').forEach((b) =>
       b.addEventListener('click', () => this.mostrarPestana(+b.dataset.pestana)));
     $('boton-jugar').addEventListener('click', () => this.iniciar());
     $('boton-otra').addEventListener('click', () => this.jugarDeNuevo());
+    this.el.finAlta.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this._mostrarTabla(this.agregarRecord(this.el.finNombre.value, M.G.puntos));
+    });
+    $('boton-saltear').addEventListener('click', () => this._mostrarTabla(-1));
     $('boton-menu').addEventListener('click', () => this.irAlMenu());
     // que los clics en botones no disparen el láser
     this.raiz.querySelectorAll('button').forEach((b) => b.addEventListener('mousedown', (e) => e.stopPropagation()));
@@ -272,12 +326,13 @@ class Interfaz {
     const estado = this.estado();
     const G = M.G;
     const el = this.el;
-    if (estado !== this._anterior.estado) this._entrarEn(estado);
-
     el.titulo.classList.toggle('oculto', estado !== 'titulo');
     el.hud.classList.toggle('oculto', estado !== 'juego');
     el.pausa.classList.toggle('oculto', !this.pausado || estado !== 'juego');
     el.fin.classList.toggle('oculto', estado !== 'fin');
+
+    // Después de mostrar la pantalla: un input escondido no puede recibir el foco.
+    if (estado !== this._anterior.estado) this._entrarEn(estado);
     if (estado !== 'juego') return;
 
     // vida: barra de 0 a la vida inicial; lo que sobra se ve como "sobrecarga" celeste
@@ -342,15 +397,35 @@ class Interfaz {
   _entrarEn(estado) {
     this._anterior = { estado };
     if (estado === 'titulo') {
-      this.el.tituloRecord.textContent = this.record ? `Récord: ${this.record} puntos` : '';
+      this.el.tituloRecords.innerHTML = this._recordsHTML(C.records.enTitulo);
     }
     if (estado === 'fin') {
       const puntos = M.G.puntos;
-      const nuevo = puntos > this.record;
-      if (nuevo) this._guardarRecord(puntos);
       this.el.finPuntos.textContent = puntos;
-      this.el.finRecord.innerHTML = nuevo ? '<span class="nuevo-record">¡Nuevo récord!</span>' : `Récord: ${this.record}`;
+      if (this.entraEnTabla(puntos)) {
+        // Primero el nombre; la tabla y los botones aparecen al guardar.
+        this.el.finAlta.classList.remove('oculto');
+        this.el.finRecords.classList.add('oculto');
+        this.el.finBotones.classList.add('oculto');
+        this.el.finRecord.innerHTML = puntos > this.record ? '<span class="nuevo-record">¡Nuevo récord!</span>' : '';
+        this.el.finNombre.value = leerGuardado(CLAVE_NOMBRE) || '';
+        this.el.finNombre.focus();
+        this.el.finNombre.select();
+      } else {
+        this.el.finAlta.classList.add('oculto');
+        this.el.finRecords.classList.add('oculto');
+        this.el.finBotones.classList.remove('oculto');
+        this.el.finRecord.textContent = this.record ? `Récord: ${this.record}` : '';
+      }
     }
+  }
+
+  _mostrarTabla(resaltado) {
+    this.el.finNombre.blur();
+    this.el.finAlta.classList.add('oculto');
+    this.el.finRecords.innerHTML = this._recordsHTML(C.records.puestos, resaltado);
+    this.el.finRecords.classList.remove('oculto');
+    this.el.finBotones.classList.remove('oculto');
   }
 
   _destello(tipo) {
@@ -368,21 +443,76 @@ class Interfaz {
     this._tAviso = setTimeout(() => a.classList.add('oculto'), 1200);
   }
 
-  // El récord se guarda en el navegador. Si el navegador no deja, simplemente no se guarda.
-  _leerRecord() {
-    try {
-      return +localStorage.getItem('spaceSurvival.record') || 0;
-    } catch (e) {
-      return 0;
-    }
+  // ---- tabla de récords
+
+  get record() {
+    return this.records.length ? this.records[0].puntos : 0;
   }
 
-  _guardarRecord(puntos) {
-    this.record = puntos;
+  // ¿Este puntaje entra en la tabla?
+  entraEnTabla(puntos) {
+    if (!(puntos > 0)) return false;
+    return this.records.length < C.records.puestos ||
+      puntos > this.records[this.records.length - 1].puntos;
+  }
+
+  // Devuelve el puesto (0 = primero), o -1 si al final no entró.
+  agregarRecord(nombre, puntos) {
+    const fila = { nombre: this._limpiarNombre(nombre), puntos, fecha: Date.now() };
+    this.records = this._ordenar([...this.records, fila]);
+    escribirGuardado(CLAVE_RECORDS, JSON.stringify(this.records));
+    escribirGuardado(CLAVE_NOMBRE, fila.nombre);
+    return this.records.indexOf(fila);
+  }
+
+  _leerRecords() {
+    let lista;
     try {
-      localStorage.setItem('spaceSurvival.record', String(puntos));
+      lista = JSON.parse(leerGuardado(CLAVE_RECORDS));
     } catch (e) {
-      /* sin almacenamiento: el récord dura hasta cerrar la página */
+      lista = null; // guardado roto: se empieza de cero en vez de romper el juego
     }
+    lista = (Array.isArray(lista) ? lista : [])
+      .filter((r) => r && Number.isFinite(+r.puntos))
+      .map((r) => ({
+        nombre: this._limpiarNombre(r.nombre),
+        puntos: Math.max(0, Math.trunc(+r.puntos)),
+        fecha: Number.isFinite(+r.fecha) ? +r.fecha : 0,
+      }));
+
+    // Antes se guardaba un único récord sin nombre: pasa a ser una fila más.
+    const viejo = Math.trunc(+leerGuardado(CLAVE_RECORD_VIEJO)) || 0;
+    if (viejo > 0 && !lista.some((r) => r.puntos >= viejo)) {
+      lista.push({ nombre: '—', puntos: viejo, fecha: 0 });
+    }
+    return this._ordenar(lista);
+  }
+
+  // De mayor a menor; si empatan, primero el más viejo (llegó antes).
+  _ordenar(lista) {
+    return lista
+      .slice()
+      .sort((a, b) => b.puntos - a.puntos || a.fecha - b.fecha)
+      .slice(0, C.records.puestos);
+  }
+
+  _limpiarNombre(n) {
+    const limpio = String(n == null ? '' : n)
+      .replace(/[\u0000-\u001f\u007f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, C.records.largoNombre);
+    return limpio || 'Anónimo';
+  }
+
+  _recordsHTML(cuantos, resaltado = -1) {
+    const filas = this.records.slice(0, cuantos);
+    if (!filas.length) return '<p class="records-vacio">Todavía no hay récords. ¡Entrá en la tabla!</p>';
+    return `<ol class="records-lista">${filas.map((r, i) => `
+      <li${i === resaltado ? ' class="nuevo"' : ''}>
+        <span class="puesto">${i + 1}</span>
+        <span class="nombre">${escaparHTML(r.nombre)}</span>
+        <span class="puntos">${r.puntos}</span>
+      </li>`).join('')}</ol>`;
   }
 }

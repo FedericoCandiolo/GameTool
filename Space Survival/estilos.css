@@ -480,7 +480,78 @@ kbd {
 .nota { margin: 1cqw 0 0; font-size: 1.35cqw !important; }
 .pie-tarjeta { margin-top: 0.8cqw; font-size: 1.1cqw; letter-spacing: 0.2cqw; text-transform: uppercase; color: rgba(200, 230, 255, 0.45); }
 
-.record-titulo { min-height: 1.5cqw; margin: 1.2cqw 0 0; font-family: var(--titulos); font-size: 1.2cqw !important; letter-spacing: 0.2cqw; color: var(--oro) !important; }
+/* tabla de récords (pantalla de título y de fin) */
+
+.records { margin-top: 1.1cqw; }
+
+.records-vacio { margin: 0; font-size: 1.25cqw !important; color: var(--texto-tenue); }
+
+.records-lista {
+  display: grid;
+  gap: 0.3cqw;
+  width: 34cqw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.records-lista li {
+  display: grid;
+  grid-template-columns: 2.2cqw 1fr auto;
+  align-items: baseline;
+  gap: 1cqw;
+  padding: 0.3cqw 1cqw;
+  text-align: left;
+  font-size: 1.35cqw;
+  background: rgba(94, 231, 255, 0.05);
+  border: 1px solid rgba(94, 231, 255, 0.14);
+  border-radius: 0.5cqw;
+}
+
+.records-lista .puesto { font-family: var(--titulos); text-align: right; color: var(--texto-tenue); }
+.records-lista .nombre { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.records-lista .puntos { font-family: var(--titulos); font-weight: 700; color: var(--oro); }
+
+.records-lista li:first-child { border-color: rgba(255, 201, 74, 0.4); background: rgba(255, 201, 74, 0.08); }
+.records-lista li:first-child .puesto { color: var(--oro); }
+.records-lista li:first-child .puntos { text-shadow: 0 0 0.8cqw var(--oro); }
+
+.records-lista li.nuevo {
+  border-color: var(--cian);
+  background: rgba(94, 231, 255, 0.16);
+  box-shadow: 0 0 1.2cqw rgba(94, 231, 255, 0.45);
+  animation: aparecer 0.45s ease-out;
+}
+
+/* alta en la tabla, al terminar la partida */
+
+#fin-alta { display: flex; flex-direction: column; align-items: center; margin-top: 1.4cqw; }
+
+#fin-alta label {
+  font-family: var(--titulos);
+  font-size: 1.4cqw;
+  letter-spacing: 0.2cqw;
+  color: var(--cian-claro);
+}
+
+.fin-alta-fila { display: flex; align-items: stretch; gap: 0.8cqw; margin-top: 0.9cqw; }
+.fin-alta-fila .boton-principal { margin-top: 0; font-size: 1.6cqw; padding: 0.6cqw 2cqw; }
+
+#fin-nombre {
+  width: 24cqw;
+  padding: 0.5cqw 1cqw;
+  font-family: var(--titulos);
+  font-size: 1.8cqw;
+  color: var(--texto);
+  background: rgba(4, 10, 28, 0.9);
+  border: 2px solid var(--borde);
+  border-radius: 0.6cqw;
+  outline: none;
+}
+#fin-nombre:focus { border-color: var(--cian); box-shadow: 0 0 1.5cqw rgba(94, 231, 255, 0.4); }
+#fin-nombre::placeholder { color: rgba(200, 230, 255, 0.3); }
+
+#fin-botones { display: flex; flex-direction: column; align-items: center; }
 
 /* fin */
 

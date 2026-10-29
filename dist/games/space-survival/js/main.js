@@ -70,7 +70,10 @@
   window.addEventListener('keydown', (e) => {
     sonidos.desbloquear();
     const k = norm(e.key);
-    if ([' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) e.preventDefault();
+    // Si se está escribiendo el nombre para la tabla de récords, las teclas son
+    // del input: ni se frena el espacio ni se mueve la nave.
+    const escribiendo = document.activeElement && document.activeElement.tagName === 'INPUT';
+    if (!escribiendo && [' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) e.preventDefault();
     if (e.repeat) return;
     if (ui.manejarTecla(k)) return; // menús, pausa, sonido
     M.teclas.add(k);
