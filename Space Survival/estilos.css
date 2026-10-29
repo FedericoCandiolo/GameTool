@@ -569,6 +569,9 @@ body.tactil #juego { -webkit-touch-callout: none; }
   display: none;
   font-family: var(--cuerpo);
   color: var(--texto);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body.tactil #tactil {
@@ -584,6 +587,10 @@ body.tactil #tactil.oculto { display: none; }
   pointer-events: auto;
   touch-action: none;             /* nada de scroll ni zoom sobre los botones */
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -602,6 +609,7 @@ body.tactil #tactil.oculto { display: none; }
   transition: transform 0.06s, opacity 0.12s, border-color 0.12s;
 }
 
+.tac-boton:focus { outline: none; }
 .tac-boton.apretado { transform: scale(0.93); opacity: 1; border-color: var(--cian); }
 
 .tac-redondo { border-radius: 50%; line-height: 1; }

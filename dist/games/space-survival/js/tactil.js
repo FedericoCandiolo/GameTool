@@ -95,8 +95,13 @@ class Tactil {
       </div>
     `);
 
+    const capa = document.getElementById('tactil');
+    for (const evento of ['contextmenu', 'selectstart', 'dragstart']) {
+      capa.addEventListener(evento, (e) => e.preventDefault());
+    }
+
     this.el = {
-      capa: document.getElementById('tactil'),
+      capa,
       vertical: document.getElementById('tac-vertical'),
       laser: document.querySelector('[data-laser]'),
       acel: [...document.querySelectorAll('[data-acel]')],
