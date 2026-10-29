@@ -15,12 +15,13 @@ Si sabés cómo funcionaba el proyecto en Scratch, ya sabés cómo funciona este
 |---|---|---|
 | `js/sprites.js` | El juego: todos los sprites y sus guiones | Sí, casi siempre acá |
 | `js/interfaz.js` | HUD y pantallas (título, pausa, fin) | Para mostrar algo nuevo en pantalla |
+| `js/tactil.js` | Controles en pantalla para teléfonos | Para sumar o mover un botón táctil |
 | `estilos.css` | Cómo se ve la interfaz | Para cambiar colores o tamaños |
 | `js/motor.js` | El "Scratch": sprites, clones, mensajes, colisiones, lápiz, dibujo | Rara vez |
 | `js/main.js` | Arranque: carga imágenes, teclado, mouse, bucle | Para sonidos nuevos |
 
 `index.html` los carga en este orden: `config.js` → `assets-embebidos.js` → `motor.js` →
-`sprites.js` → `interfaz.js` → `main.js`. Son scripts comunes (no módulos), así que lo que declara uno
+`sprites.js` → `interfaz.js` → `tactil.js` → `main.js`. Son scripts comunes (no módulos), así que lo que declara uno
 (por ejemplo `CONFIG`, `Motor`, `esperar`) lo puede usar el siguiente.
 
 ---
@@ -216,7 +217,7 @@ Detalles heredados de Scratch:
   `M.lapiz.borrar()` es "borrar todo" (en el original, cuando una babosa se va, borra los rastros
   de todas).
 - **Sonido** (`M.sonidos.reproducir('laser')`): el navegador recién deja sonar audio después de
-  la primera tecla o clic, por eso `main.js` llama a `sonidos.desbloquear()` en esos eventos.
+  la primera tecla, clic o toque, por eso `main.js` llama a `sonidos.desbloquear()` en esos eventos.
 
 ## 6. Dibujo
 
@@ -357,3 +358,38 @@ instrucciones están en la pantalla de título.
 | variable para todos / sólo para este objeto | `M.G.vida` / `s.vars.vida` |
 | bajar lápiz / subir lápiz / borrar | `s.bajarLapiz()` / `s.subirLapiz()` / `M.lapiz.borrar()` |
 | tocar sonido | `M.sonidos.reproducir('laser')` |
+
+
+---
+
+## Controles táctiles
+
+`js/tactil.js` dibuja los botones que se ven en un teléfono. **No toca la lógica del
+juego**: lo único que hace es escribir las mismas cosas que escribiría un teclado o un
+mouse, así que `sprites.js` no se entera de si del otro lado hay un dedo.
+
+| Botón | Qué escribe |
+|---|---|
+| Turbo / Normal / Freno | agrega o saca `C.teclas.adelante` / `C.teclas.freno` de `M.teclas` |
+| ◀ ▶ | `M.teclas` con `C.teclas.izquierda` / `derecha` mientras está apretado |
+| Fuego | `M.teclas` con `C.teclas.disparo` mientras está apretado |
+| Láser | `M.mouseAbajo = true` mientras está apretado (es lo que mira `laserPedido()`) |
+| Power-ups | son los mismos cuadros del HUD; llaman a `M.alPresionarTecla(...)` |
+
+El acelerador **queda fijo** (no hay que mantenerlo apretado) porque en un teléfono los
+pulgares ya están ocupados girando y disparando. Son los tres estados que da el teclado:
+frenado la nave no avanza pero sigue girando, sin nada avanza a velocidad de crucero, y
+con turbo avanza rápido y gira más rápido. Como el motor vacía `M.teclas` al perder el
+foco y al empezar una partida, `Tactil.actualizar()` vuelve a aplicar el estado elegido
+en cada tick.
+
+Los botones usan eventos de **puntero** (no `touch`), que es lo que permite varios dedos a
+la vez: girar y disparar al mismo tiempo son dos punteros independientes.
+
+La capa cuelga del `<body>` y no de `#juego`, y se mide en `vmin` en vez de `cqw`: un
+juego 4:3 en un teléfono 19,5:9 deja dos franjas negras a los costados, y ahí es justo
+donde apoyan los pulgares. En una pantalla 4:3 los botones quedan sobre el juego.
+
+Cuándo aparecen: `CONFIG.tactil.activar` es `'auto'` por defecto (pantallas sin mouse, o
+al primer toque en una notebook con pantalla táctil). `true` o `false` lo fuerzan, y
+`?tactil=1` en la URL sirve para probarlo desde la compu.

@@ -182,7 +182,17 @@ class Interfaz {
         <p class="lema">Sobreviví el máximo tiempo posible</p>
         <div class="tarjeta">
           <nav>${PESTANAS.map((p, i) => `<button data-pestana="${i}">${p}</button>`).join('')}</nav>
-          <section data-pestana="0" class="controles">
+          <section data-pestana="0" class="controles teclas-tactil">
+            <ul>
+              <li><b>Turbo · Normal · Freno</b> quedan fijos: elegís uno y la nave sigue así</li>
+              <li><b>&#9664; &#9654;</b> girar (se puede girar incluso frenado)</li>
+              <li><b>Fuego</b> mantenelo apretado para disparar</li>
+              <li><b>Láser</b> cuando se completa el anillo rojo</li>
+              <li>Tocá un power-up guardado para usarlo</li>
+              <li>Se juega apaisado</li>
+            </ul>
+          </section>
+          <section data-pestana="0" class="controles teclas-teclado">
             <div class="wasd">
               <kbd class="w">${nombreTecla(T.adelante)}</kbd>
               <kbd class="a">${nombreTecla(T.izquierda)}</kbd><kbd class="s">${nombreTecla(T.freno)}</kbd><kbd class="d">${nombreTecla(T.derecha)}</kbd>
@@ -203,7 +213,7 @@ class Interfaz {
           <section data-pestana="2">
             <div class="fichas">${Object.values(TIPOS_POWERUP).map((p) => ficha({ ...p, chico: true, texto: p.descripcion })).join('')}
               ${FICHAS_VIDA.map(ficha).join('')}</div>
-            <p class="nota">Guardás hasta ${C.powerUps.espacios} power-up${C.powerUps.espacios > 1 ? 's' : ''} y los usás con ${teclasPU.map(tecla$).join(' ')}.
+            <p class="nota">Guardás hasta ${C.powerUps.espacios} power-up${C.powerUps.espacios > 1 ? 's' : ''} y los usás <span class="solo-teclado">con ${teclasPU.map(tecla$).join(' ')}</span><span class="solo-tactil">tocándolos</span>.
               Tocar el borde del mapa resta ${C.nave.danoBorde} de vida.</p>
           </section>
           <div class="pie-tarjeta"><kbd>←</kbd><kbd>→</kbd> ver más</div>
@@ -214,7 +224,7 @@ class Interfaz {
 
       <div id="pausa" class="pantalla oculto">
         <h2>Pausa</h2>
-        <p>${tecla$(T.pausa)} para seguir · <kbd>ESC</kbd> menú</p>
+        <p class="solo-teclado">${tecla$(T.pausa)} para seguir · <kbd>ESC</kbd> menú</p>
       </div>
 
       <div id="fin" class="pantalla oculto">

@@ -22,6 +22,12 @@ Abrí `index.html` con doble clic. No hace falta servidor.
 | Enter | empezar / jugar de nuevo |
 | ← → | cambiar de pestaña en las instrucciones |
 
+En celulares y tablets aparecen solos los controles en pantalla (apaisado). El acelerador
+—**Turbo / Normal / Freno**— queda fijo: tocás uno y la nave sigue así, de modo que podés
+girar y disparar al mismo tiempo. Frenado la nave no avanza pero igual gira. Los botones
+de girar, fuego y láser se mantienen apretados, y los power-ups se usan tocando su cuadro
+del HUD. Para probarlos desde la compu, abrí la página con `?tactil=1`.
+
 ## Cambiar parámetros
 
 Todo lo que se puede ajustar sin programar está en [`config.js`](config.js): vidas,
@@ -42,6 +48,7 @@ js/
   motor.js                  mini intérprete al estilo Scratch: sprites, clones, guiones, colisiones, dibujo
   sprites.js                EL JUEGO: cada sprite del Scratch con sus guiones
   interfaz.js               HUD y pantallas (título, pausa, fin) en HTML encima del canvas
+  tactil.js                 controles en pantalla para teléfonos y tablets
   main.js                   arranque: carga imágenes, teclado/mouse, bucle de 30 ticks/s
   assets-embebidos.js       GENERADO: todas las imágenes y sonidos en un solo archivo
 assets/

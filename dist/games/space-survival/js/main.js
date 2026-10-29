@@ -60,6 +60,9 @@
   const ui = new Interfaz(document.getElementById('juego'));
   window.interfaz = ui; // para usarla desde la consola del navegador (F12)
 
+  const tactil = new Tactil(document.getElementById('juego'), ui);
+  window.tactil = tactil; // tactil.mostrar(true/false) para forzarlo a mano
+
   // ---- entrada
 
   const norm = (k) => (k ? Motor.normalizarTecla(k) : null);
@@ -74,6 +77,7 @@
     M.alPresionarTecla(k);
   });
   window.addEventListener('keyup', (e) => M.teclas.delete(norm(e.key)));
+  window.addEventListener('pointerdown', () => sonidos.desbloquear(), { passive: true });
   window.addEventListener('blur', () => {
     M.teclas.clear();
     M.mouseAbajo = false;
@@ -85,7 +89,7 @@
     const r = canvas.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * ANCHO - ANCHO / 2;
     const y = ALTO / 2 - ((e.clientY - r.top) / r.height) * ALTO;
-    M.mouseAbajo = true;
+    if (!tactil.activo) M.mouseAbajo = true; // en táctil el láser tiene su botón
     M.alHacerClic(x, y);
   });
   window.addEventListener('mouseup', () => (M.mouseAbajo = false));
@@ -109,6 +113,7 @@
     if (huboTick) {
       M.dibujar();
       ui.actualizar();
+      tactil.actualizar();
     }
     requestAnimationFrame(bucle);
   }

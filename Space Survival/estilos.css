@@ -527,3 +527,198 @@ kbd {
   0%, 100% { box-shadow: 0 0 1.4cqw rgba(94, 231, 255, 0.5), inset 0 -0.3cqw 0 rgba(0, 0, 0, 0.2); }
   50% { box-shadow: 0 0 3cqw rgba(94, 231, 255, 0.85), inset 0 -0.3cqw 0 rgba(0, 0, 0, 0.2); }
 }
+
+/* ----------------------------------------------------------------- táctil */
+/* Controles en pantalla, sólo cuando js/tactil.js le pone la clase "tactil" al
+   <body> (teléfonos y tablets, o ?tactil=1 para probarlo desde la compu).
+   Van colgados del <body> y no de #juego, y se miden en vmin en vez de cqw,
+   para que caigan en los bordes REALES de la pantalla: en un teléfono 19,5:9
+   un juego 4:3 deja dos franjas negras a los costados, y ahí es justo donde
+   apoyan los pulgares. En una pantalla 4:3 quedan sobre el juego, como antes. */
+
+.solo-tactil { display: none !important; }
+body.tactil .solo-teclado { display: none !important; }
+body.tactil .solo-tactil { display: revert !important; }
+
+/* en un teléfono no hay teclas que mostrar */
+body.tactil .espacio-pu kbd,
+body.tactil .boton-principal kbd,
+body.tactil .boton-secundario kbd,
+body.tactil .pie-tarjeta { display: none; }
+
+/* el botón de láser ya muestra la carga, así que el panel sobra */
+body.tactil .hud-laser { display: none; }
+
+/* la pestaña "Controles" tiene dos versiones: teclado y pantalla táctil */
+.tarjeta section.teclas-tactil.activa { display: none; }
+body.tactil .tarjeta section.teclas-teclado.activa { display: none; }
+body.tactil .tarjeta section.teclas-tactil.activa { display: flex; }
+.teclas-tactil ul { line-height: 2; }
+.teclas-tactil b { color: var(--cian-claro); font-family: var(--titulos); font-weight: 700; }
+
+/* los cuadros de power-up del HUD pasan a ser botones, un poco más grandes
+   para que se puedan tocar con el dedo */
+body.tactil .hud-powerups { transform: translateX(-50%) scale(1.35); transform-origin: bottom center; }
+body.tactil .espacio-pu { pointer-events: auto; touch-action: none; cursor: pointer; }
+body.tactil .espacio-pu.vacio { pointer-events: none; }
+body.tactil .espacio-pu:active { filter: brightness(1.4); }
+
+body.tactil #juego { -webkit-touch-callout: none; }
+
+#tactil, #tac-vertical {
+  display: none;
+  font-family: var(--cuerpo);
+  color: var(--texto);
+}
+
+body.tactil #tactil {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none; /* sólo los botones reciben el dedo */
+}
+body.tactil #tactil.oculto { display: none; }
+
+.tac-boton {
+  pointer-events: auto;
+  touch-action: none;             /* nada de scroll ni zoom sobre los botones */
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3vmin;
+  margin: 0;
+  padding: 0;
+  font-family: var(--titulos);
+  color: var(--texto);
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 1.5vmin;
+  box-shadow: 0 0 2vmin rgba(94, 231, 255, 0.18);
+  backdrop-filter: blur(2px);
+  opacity: 0.85;
+  transition: transform 0.06s, opacity 0.12s, border-color 0.12s;
+}
+
+.tac-boton.apretado { transform: scale(0.93); opacity: 1; border-color: var(--cian); }
+
+.tac-redondo { border-radius: 50%; line-height: 1; }
+.tac-redondo span { font-size: 2vmin; letter-spacing: 0.2vmin; text-transform: uppercase; }
+
+/* ---- lado izquierdo: acelerador y giro */
+
+.tac-lado { position: absolute; bottom: 3vmin; display: flex; align-items: flex-end; }
+.tac-izq { left: 3vmin; flex-direction: column; gap: 2.5vmin; align-items: flex-start; }
+.tac-der { right: 3vmin; gap: 2.5vmin; }
+
+.tac-acel { display: flex; gap: 1.2vmin; }
+.tac-acel .tac-boton { width: 14vmin; height: 10vmin; gap: 0.6vmin; }
+.tac-acel i { font-size: 3vmin; font-style: normal; line-height: 1; color: var(--texto-tenue); }
+.tac-acel span { font-size: 1.9vmin; letter-spacing: 0.15vmin; text-transform: uppercase; color: var(--texto-tenue); }
+
+.tac-acel .elegido {
+  opacity: 1;
+  border-color: var(--cian);
+  box-shadow: 0 0 2.5vmin rgba(94, 231, 255, 0.45), inset 0 0 1.5vmin rgba(94, 231, 255, 0.15);
+}
+.tac-acel .elegido i, .tac-acel .elegido span { color: var(--cian-claro); }
+.tac-acel .tac-acel-turbo.elegido { border-color: var(--oro); box-shadow: 0 0 2.5vmin rgba(255, 201, 74, 0.45); }
+.tac-acel .tac-acel-turbo.elegido i, .tac-acel .tac-acel-turbo.elegido span { color: var(--oro); }
+.tac-acel .tac-acel-freno.elegido { border-color: var(--peligro); box-shadow: 0 0 2.5vmin rgba(255, 61, 90, 0.4); }
+.tac-acel .tac-acel-freno.elegido i, .tac-acel .tac-acel-freno.elegido span { color: #ff8a98; }
+
+.tac-giro { display: flex; gap: 2.5vmin; }
+.tac-giro .tac-boton { width: 20vmin; height: 20vmin; font-size: 6vmin; color: var(--cian-claro); }
+
+/* ---- lado derecho: láser y disparo */
+
+.tac-fuego {
+  width: 24vmin;
+  height: 24vmin;
+  border-color: rgba(94, 231, 255, 0.6);
+  box-shadow: 0 0 3vmin rgba(94, 231, 255, 0.3), inset 0 0 2vmin rgba(94, 231, 255, 0.12);
+}
+.tac-fuego span { font-size: 2.6vmin; color: var(--cian-claro); }
+
+.tac-laser {
+  position: relative;
+  width: 17vmin;
+  height: 17vmin;
+  margin-bottom: 3vmin;
+  opacity: 0.55;
+}
+.tac-laser span { font-size: 2vmin; color: var(--texto-tenue); }
+
+/* anillo de carga: --carga va de 0 a 1 y lo escribe tactil.js en cada tick */
+.tac-laser::before {
+  content: '';
+  position: absolute;
+  inset: -1.4vmin;
+  border-radius: 50%;
+  background: conic-gradient(#ff5a6e calc(var(--carga, 0) * 360deg), rgba(255, 255, 255, 0.08) 0);
+  -webkit-mask: radial-gradient(closest-side, transparent 86%, #000 88%);
+  mask: radial-gradient(closest-side, transparent 86%, #000 88%);
+}
+
+.tac-laser.listo {
+  opacity: 1;
+  border-color: rgba(255, 90, 110, 0.7);
+  box-shadow: 0 0 3vmin rgba(255, 61, 90, 0.5);
+  animation: brillo 0.7s infinite alternate;
+}
+.tac-laser.listo span { color: #ff8a98; }
+
+/* ---- pausa: arriba al centro, que es lo único que el HUD deja libre */
+
+.tac-pausa {
+  position: absolute;
+  top: 2.5vmin;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 9vmin;
+  height: 7vmin;
+  font-size: 2.6vmin;
+  letter-spacing: 0.4vmin;
+  color: var(--texto-tenue);
+}
+.tac-pausa.apretado { transform: translateX(-50%) scale(0.93); }
+
+.tac-pausa-botones { display: none; gap: 1.2cqw; margin-top: 2cqw; }
+body.tactil .tac-pausa-botones { display: flex; }
+body.tactil #pausa { pointer-events: auto; }
+
+/* ---- aviso de girar el teléfono */
+
+body.tactil #tac-vertical {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+  padding: 6vmin;
+  text-align: center;
+  background: #04071a;
+}
+body.tactil #tac-vertical.oculto { display: none; }
+
+#tac-vertical h2 { margin: 0; font-family: var(--titulos); font-size: 5vmin; color: var(--cian); }
+#tac-vertical p { margin: 0; font-size: 3.4vmin; color: var(--texto-tenue); }
+#tac-vertical .boton-secundario { margin-top: 2vmin; font-size: 3vmin; padding: 1.5vmin 4vmin; }
+
+.tac-girar-telefono {
+  width: 14vmin;
+  height: 22vmin;
+  border: 0.8vmin solid var(--cian);
+  border-radius: 2vmin;
+  animation: girar-telefono 2s ease-in-out infinite;
+}
+
+@keyframes girar-telefono {
+  0%, 30% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(-90deg); }
+}
