@@ -319,7 +319,7 @@ class Sprite {
     this.y = y;
     this._cambio();
     this._mantenerEnEscenario();
-    if (this.lapizAbajo) this.motor.lapiz.linea(ox, oy, this.x, this.y, this.colorLapiz, this.grosorLapiz);
+    if (this.lapizAbajo) this.motor.lapiz.linea(this, ox, oy, this.x, this.y, this.colorLapiz, this.grosorLapiz);
   }
 
   // Igual que Scratch 2: el sprite no puede salir del todo; quedan al menos 18 px adentro.
@@ -475,6 +475,7 @@ class Sprite {
 
   bajarLapiz() { this.lapizAbajo = true; }
   subirLapiz() { this.lapizAbajo = false; }
+  borrarRastro() { this.motor.lapiz.borrarDe(this); } // sólo lo que dibujó este sprite
 
   // ---- control
 
@@ -521,6 +522,11 @@ function colisionan(a, b, contraColorDeB = false) {
 
 // ---------------------------------------------------------------- lápiz
 
+// En el Scratch el lápiz era uno solo para todos los sprites: no había forma de
+// borrar el rastro de uno sin borrar el de todos. Acá se sigue dibujando en un
+// único canvas (es lo que se muestra y lo que mira tocaSprite), pero además se
+// guardan los segmentos de cada dueño, así se puede borrar el rastro de uno
+// volviendo a dibujar los de los que siguen vivos.
 class Lapiz {
   constructor() {
     this.canvas = document.createElement('canvas');
@@ -528,10 +534,18 @@ class Lapiz {
     this.canvas.height = ALTO * ESCALA_PANTALLA;
     this.ctx = this.canvas.getContext('2d');
     this.trazo = new Uint8Array(ANCHO * ALTO); // para detectar colisiones con el dibujo
+    this.rastros = new Map(); // dueño -> segmentos que dibujó
     this.vacio = true;
   }
 
-  linea(x0, y0, x1, y1, color, grosor) {
+  linea(dueno, x0, y0, x1, y1, color, grosor) {
+    let rastro = this.rastros.get(dueno);
+    if (!rastro) this.rastros.set(dueno, (rastro = []));
+    rastro.push([x0, y0, x1, y1, color, grosor]);
+    this._segmento(x0, y0, x1, y1, color, grosor);
+  }
+
+  _segmento(x0, y0, x1, y1, color, grosor) {
     const c = this.ctx;
     const E = ESCALA_PANTALLA;
     c.strokeStyle = color;
@@ -557,6 +571,21 @@ class Lapiz {
   }
 
   borrar() {
+    this.rastros.clear();
+    this._limpiar();
+  }
+
+  // Borra el rastro de un solo dueño. Un canvas no se puede "des-dibujar", así
+  // que se limpia todo y se vuelven a dibujar los rastros que quedan vivos.
+  borrarDe(dueno) {
+    if (!this.rastros.delete(dueno)) return;
+    this._limpiar();
+    for (const rastro of this.rastros.values()) {
+      for (const g of rastro) this._segmento(g[0], g[1], g[2], g[3], g[4], g[5]);
+    }
+  }
+
+  _limpiar() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.trazo.fill(0);
     this.vacio = true;

@@ -161,11 +161,12 @@ window.CONFIG = {
     // siempre por la derecha, y las naves enemigas por la derecha o por arriba.
     aparicionSoloDerechaYArriba: true,
 
-    // La babosa borra su rastro al morir por disparos o por tiempo, pero no
-    // cuando la desintegra el escudo: ahí el rastro queda dibujado (y sigue
-    // haciendo daño) hasta que otra babosa lo borre. En true queda como en el
-    // Scratch original; en false el escudo también borra el rastro.
-    babosaConEscudoDejaRastro: false,
+    // El lápiz del Scratch era uno solo, así que una babosa no podía borrar su
+    // rastro sin borrar el de todas: la que moría por disparos o por tiempo
+    // limpiaba la pantalla entera, y la que desintegraba el escudo no limpiaba
+    // nada (su rastro quedaba suelto haciendo daño). En false cada babosa tiene
+    // su propio rastro y se lo lleva al morir, sea como sea que muera.
+    rastroDeBabosaCompartido: false,
 
     // Las balas enemigas que ya están volando también reciben la orden de disparo
     // y generan más balas desde la nave que dispara (ráfagas cada vez más grandes).

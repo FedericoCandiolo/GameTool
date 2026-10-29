@@ -214,8 +214,13 @@ Detalles heredados de Scratch:
 
 - **Lápiz** (`M.lapiz`): lo usa la babosa para dejar su rastro. Se dibuja en una capa debajo de
   los sprites, y además se guarda una grilla de 480×360 para detectar colisiones con el rastro.
-  `M.lapiz.borrar()` es "borrar todo" (en el original, cuando una babosa se va, borra los rastros
-  de todas).
+  - `M.lapiz.borrar()` borra todo, como el "borrar" del Scratch.
+  - `s.borrarRastro()` borra **sólo lo que dibujó ese sprite**. En el Scratch no existía: el
+    lápiz era uno solo, así que una babosa no podía irse sin llevarse el rastro de las demás.
+    Para poder hacerlo, el lápiz guarda además los segmentos de cada dueño; como un canvas no
+    se puede "des-dibujar", borrar uno limpia la capa y vuelve a dibujar los que quedan vivos
+    (con 6 babosas y ~900 segmentos tarda ~1 ms, y sólo pasa cuando una muere).
+  - El comportamiento viejo sigue disponible con `original.rastroDeBabosaCompartido`.
 - **Sonido** (`M.sonidos.reproducir('laser')`): el navegador recién deja sonar audio después de
   la primera tecla, clic o toque, por eso `main.js` llama a `sonidos.desbloquear()` en esos eventos.
 
@@ -356,7 +361,7 @@ instrucciones están en la pantalla de título.
 | detener todos | `M.detenerTodo()` |
 | número al azar entre 1 y 5 | `azarEntero(1, 5)` (o `azarSegundos([4, 6])` para tiempos) |
 | variable para todos / sólo para este objeto | `M.G.vida` / `s.vars.vida` |
-| bajar lápiz / subir lápiz / borrar | `s.bajarLapiz()` / `s.subirLapiz()` / `M.lapiz.borrar()` |
+| bajar lápiz / subir lápiz / borrar | `s.bajarLapiz()` / `s.subirLapiz()` / `M.lapiz.borrar()` (o `s.borrarRastro()`, que no está en Scratch) |
 | tocar sonido | `M.sonidos.reproducir('laser')` |
 
 

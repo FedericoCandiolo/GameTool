@@ -16,6 +16,11 @@ let M = null; // el Motor, lo crea main.js
 const CENTRO = { x: 0, y: 0 };
 const COLOR_RASTRO = '#5c0b0b';
 const COLOR_RASTRO_RGB = [0x5c, 0x0b, 0x0b];
+
+// Al morir, la babosa se lleva su rastro. Con el lápiz único del Scratch no se
+// podía: borrar uno borraba el de todas.
+const borrarRastro = (s) =>
+  (C.original.rastroDeBabosaCompartido ? M.lapiz.borrar() : s.borrarRastro());
 const ANGULOS_LANZAMETEOROS = [78, 55, 11, -13, -55, -77];
 
 const nave = () => M.sprite('nave');
@@ -987,7 +992,7 @@ const BABOSA = {
         if (s.tocando('rayo1') || s.tocando('rayo2')) s.vars.vida -= C.disparo.danoPorTick;
         if (s.tocando('rayoluz')) s.vars.vida -= C.laser.danoPorTick;
         if (!(0 < s.vars.vida)) {
-          M.lapiz.borrar(); // borra los rastros de TODAS las babosas
+          borrarRastro(s);
           s.borrarClon();
         }
         yield;
@@ -1009,16 +1014,15 @@ const BABOSA = {
     },
     function* (s) {
       yield* esperar(azarSegundos(C.babosa.duracion));
-      M.lapiz.borrar();
+      borrarRastro(s);
       s.borrarClon();
     },
     function* (s) {
       for (;;) {
         if (s.tocando('Escudo')) {
-          // Los otros dos modos de morir (disparos y tiempo) borran el rastro;
-          // éste no, y el rastro sigue haciendo daño sin la babosa. Como ellos,
-          // borra el de TODAS las babosas: el lápiz del Scratch es uno solo.
-          if (!C.original.babosaConEscudoDejaRastro) M.lapiz.borrar();
+          // En el Scratch este guión era sólo "borrar clon": el rastro quedaba
+          // suelto haciendo daño, porque no había forma de borrar el propio.
+          if (!C.original.rastroDeBabosaCompartido) s.borrarRastro();
           s.borrarClon();
         }
         yield;
