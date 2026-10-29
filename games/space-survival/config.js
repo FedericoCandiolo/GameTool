@@ -22,6 +22,12 @@ window.CONFIG = {
     volumen: 0.6,            // 0 a 1
   },
 
+  // Controles en pantalla para teléfonos y tablets (js/tactil.js).
+  tactil: {
+    activar: 'auto',        // 'auto' = sólo en pantallas sin mouse · true = siempre · false = nunca
+    avisoVertical: true,    // mostrar el cartel de "girá el teléfono" en vertical
+  },
+
   // Nombres de tecla como los reporta el navegador: 'w', ' ' (espacio), 'Enter', 'ArrowUp'...
   teclas: {
     adelante: 'w',
